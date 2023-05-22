@@ -44,15 +44,8 @@ estacionID #Notar que ya lo guarda como " "
 descripcionID <- data_raw[1:14, c("codigo_estacion", estacionID)]
 
 descripcionID
-####### EDA########
-####################
-
 #ahora se selecciona las mediciones de la base de datos para hacer EDA.
 
-date.ini <-paste0("La fecha inicial de la estaciónID ingresada es: ", data_raw[11, estacionID])  
-date.fin <-paste0("La fecha final de la estaciónID ingresada es: ", data_raw[12, estacionID])
-date.ini
-date.fin
 
 data_elegida<-data_raw[-c(1:14), c("codigo_estacion", estacionID)]#Descarta las primeras catorce filas
 #y las fechas con los datos de la columna estacionID
@@ -62,6 +55,22 @@ data_na
 data_limpia <- na.omit(data_na)
 
 
+#####EDA###########
+################
+es.faltante <- is.na(data_na) 
+sum(es.faltante) #datos faltantes
+
+#opcional
+#na.index <- which(es.faltante)
+#dates[na.index] #fechas de cuales son los datos faltantes
+
+#número de datos válidos
+datos_validos <- !is.na(es.faltante)
+sum(datos_validos)
+#summary, sd y IQR
+summary(data_limpia)
+sd(data_limpia$estacionID)
+IQR(data_limpia$estacionID)
 
 
 
@@ -74,35 +83,51 @@ if (!require(hydroTSM)) {
 }
 library(hydroTSM)
 
-days<-dip(from=as.Date(date.ini),to=as.Date(date.fin),out.type="nmbr")
-data_diaria <- extract(data_na, FUN = max, na.rm = 0)
+
+date.ini <-paste0("La fecha inicial de la estaciónID ingresada es: ", data_limpia[1,"codigo_estacion"])  
+date.fin <-paste0("La fecha final de la estaciónID ingresada es: ", data_limpia[nrow(data_limpia), "codigo_estacion"])
+date.ini
+date.fin
+
+# Convierte las fechas a objetos de clase "Date"
+data_na$estacionID <- as.Date(data_na$estacionID)
+
+# Crea una serie temporal con los datos
+serie_temporal <- as.timeSeries(data_na[, -1], dates = data_na$estacionID)
 
 
-#################### Esto lo debo hacer con hydroTSM######################
+# Métricas diarias
+daily_stats <- data.frame(
+  "Cantidad de datos diarios" = as.vector(countObs(serie_temporal, FUN = "sum")),
+  "Cantidad de datos faltantes diarios" = as.vector(countNA(serie_temporal, FUN = "sum"))
+)
 
+# Métricas mensuales
+monthly_stats <- data.frame(
+  "Cantidad de datos mensuales" = as.vector(countObs(serie_temporal, FUN = "month", FUN2 = "sum")),
+  "Cantidad de datos faltantes mensuales" = as.vector(countNA(serie_temporal, FUN = "month", FUN2 = "sum"))
+)
 
-range(data_na, na.rm = TRUE) #Rango de valores 
-max(data_na, na.rm = TRUE)  #valor máximo
-min(data_na, na.rm=TRUE) #valor mínimo
-mean(data_na, na.rm = TRUE) #promedio 
-median(data_na, na.rm = TRUE) #mediana
-es.faltante <- is.na(data_na) 
-sum(es.faltante) #datos faltantes
-na.index <- which(es.faltante)
-dates[na.index] #fechas de cuales son los datos faltantes
-#número de datos válidos
-datos_validos <- !is.na(es.faltante)
-sum(datos_validos)
-#Cuartiles
-cuartiles <- quantile(data_na, na.rm = TRUE) cuartiles
+# Métricas estacionales
+seasonal_stats <- data.frame(
+  "Cantidad de datos estacionales" = as.vector(countObs(serie_temporal, FUN = "season", FUN2 = "sum")),
+  "Cantidad de datos faltantes estacionales" = as.vector(countNA(serie_temporal, FUN = "season", FUN2 = "sum"))
+)
 
-#Rango intercuartil
-rango_intercuartil <- cuartiles[4] - cuartiles[2] rango_intercuartil
+# Métricas anuales
+annual_stats <- data.frame(
+  "Cantidad de datos anuales" = as.vector(countObs(serie_temporal, FUN = "year", FUN2 = "sum")),
+  "Cantidad de datos faltantes anuales" = as.vector(countNA(serie_temporal, FUN = "year", FUN2 = "sum"))
+)
 
-
-#Fecha en que ocurre caudal máximo
-max.dates.index <-apply((data_limpia), MARGIN = 2, FUN = which.max())
-
-#Fecha caudal medio de data_elegida
-fecha_media <- mean(data_elegida, na.rm = TRUE)
+# Estadísticas descriptivas
+descriptive_stats <- data.frame(
+  "Mínimo" = as.vector(minTS(serie_temporal)),
+  "1er Cuartil" = as.vector(quantileTS(serie_temporal, probs = 0.25)),
+  "Mediana" = as.vector(medianTS(serie_temporal)),
+  "3er Cuartil" = as.vector(quantileTS(serie_temporal, probs = 0.75)),
+  "Máximo" = as.vector(maxTS(serie_temporal)),
+  "Desviación Estándar" = as.vector(sdTS(serie_temporal)),
+  "Rango Intercuartil" = as.vector(IQRTS(serie_temporal))
+)
 
