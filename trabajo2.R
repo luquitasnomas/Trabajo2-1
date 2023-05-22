@@ -56,6 +56,13 @@ date.fin
 
 data_elegida<-data_raw[-c(1:14), c("codigo_estacion", estacionID)]#Descarta las primeras catorce filas
 #y las fechas con los datos de la columna estacionID
+data_na<- replace(data_elegida, data_elegida == -9999, NA) #cambia los -9999 por NA
+data_na
+#Extraer los na de data_na
+data_limpia <- na.omit(data_na)
+
+
+
 
 
 
@@ -66,31 +73,9 @@ if (!require(hydroTSM)) {
   install.packages("hydroTSM")
 }
 library(hydroTSM)
-data_na<- replace(data_elegida, data_elegida == -9999, NA) #cambia los -9999 por NA
-data_na
-#Extraer los na de data_na
-data_limpia <- na.omit(data_na)
-class(data_limpia)
+
 days<-dip(from=as.Date(date.ini),to=as.Date(date.fin),out.type="nmbr")
 data_diaria <- extract(data_na, FUN = max, na.rm = 0)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 #################### Esto lo debo hacer con hydroTSM######################
