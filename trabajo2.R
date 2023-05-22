@@ -39,7 +39,7 @@ ncol(data_raw)
 nrow(data_raw)
 
 # Leer el código de identificación de la estación pluviométrica
-#y lo convierto en número para trabajar en matriz
+
 estacionID<-readline(prompt = "Ingrese el código de identificación de la estación pluviométrica: ")
 
 #mostrar la informacion general de la Estación ID
@@ -61,12 +61,16 @@ data_na<- replace(data_elegida, data_elegida == -9999, NA)
 
 range(data_na, na.rm = TRUE) #Rango de valores 
 max(data_na, na.rm = TRUE)  #valor máximo
+min(data_na, na.rm=TRUE) #valor mínimo
 mean(data_na, na.rm = TRUE) #promedio 
 median(data_na, na.rm = TRUE) #mediana
 es.faltante <- is.na(data_na) 
 sum(es.faltante) #datos faltantes
 na.index <- which(es.faltante)
 dates[na.index] #fechas de cuales son los datos faltantes
+#número de datos válidos
+datos_validos <- !is.na(es.faltante)
+sum(datos_validos)
 
 #Cuartiles
 cuartiles <- quantile(data_na, na.rm = TRUE) cuartiles
@@ -75,12 +79,8 @@ cuartiles <- quantile(data_na, na.rm = TRUE) cuartiles
 rango_intercuartil <- cuartiles[4] - cuartiles[2] rango_intercuartil
 
 
-#número de datos válidos
-datos_validos <- !is.na(es.faltante)
-sum(datos_validos)
-
 #Fecha en que ocurre caudal máximo
-max.dates.index <-apply((data_elegida), MARGIN = 2, FUN = which.max())
+max.dates.index <-apply((data_na), MARGIN = 2, FUN = which.max())
 
 #Fecha caudal medio de data_elegida
 fecha_media <- mean(data_elegida, na.rm = TRUE)
