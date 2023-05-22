@@ -31,33 +31,31 @@ file.exists("cr2_prDaily_2018/cr2_prDaily_2018.csv")
 
 
 data_raw <- read_csv(file.choose(), col_names = TRUE)
-#ruta al archivo csv
+#ruta al archivo csv y datos generales del csv
 ls()
 head(data_raw)
-str(data_raw)
-ncol(data_raw)
-nrow(data_raw)
 
 # Leer el código de identificación de la estación pluviométrica
 
 estacionID<-readline(prompt = "Ingrese el código de identificación de la estación pluviométrica: ")
+estacionID
 
 #mostrar la informacion general de la Estación ID
-data_raw[1:14,estacionID]
+descripcionID <- data_raw[1:14, c("codigo_estacion", estacionID)]
 
-
+descripcionID
 ####### EDA########
 ####################
 
 #ahora se selecciona las mediciones de la base de datos para hacer EDA.
 
-date.ini <-paste0("La fecha inicial de la estaciónID ingresada es: ", data_raw[12, estacionNombre]) #uso la variable com chr para elegir el [i] de la columna
-date.fin <-paste0("La fecha final de la estaciónID ingresada es: ", data_raw[13, estacionNombre])
+date.ini <-paste0("La fecha inicial de la estaciónID ingresada es: ", data_raw[12, estacionID]) #uso la variable com chr para elegir el [i] de la columna
+date.fin <-paste0("La fecha final de la estaciónID ingresada es: ", data_raw[13, estacionID])
 
 
-data_elegida<-data_raw[-(1:14),estacionNombre] #Descarta las primeras catorce filas
+data_elegida<-data_raw[-c(1:14),]#Descarta las primeras catorce filas
 #y elige la columna de estacionNombre
-data_na<- replace(data_elegida, data_elegida == -9999, NA)
+data_na<- replace(data_elegida, data_elegida == -9999, NA) #cambia los -9999 por NA
 
 range(data_na, na.rm = TRUE) #Rango de valores 
 max(data_na, na.rm = TRUE)  #valor máximo
