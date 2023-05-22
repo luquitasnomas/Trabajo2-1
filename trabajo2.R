@@ -89,6 +89,14 @@ date.fin <-paste0("La fecha final de la estaciónID ingresada es: ", data_limpia
 date.ini
 date.fin
 
+
+######Hasta acá funciona bien##################
+##################################################
+###################################################
+
+
+
+
 # Definir las fechas de inicio y fin
 date_ini <- as.Date(date.ini, format = "%Y-%m-%d")
 date_fin <- as.Date(date.fin, format = "%Y-%m-%d")
