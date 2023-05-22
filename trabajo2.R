@@ -89,14 +89,19 @@ date.fin <-paste0("La fecha final de la estaciónID ingresada es: ", data_limpia
 date.ini
 date.fin
 
+
+
 # Convertir las variables date.ini y date.fin a formato de fecha
-date_ini <- as.Date(date.ini)
-date_fin <- as.Date(date.fin)
+date_ini <- as.Date(date.ini, format = "%Y-%m-%d")
+date_fin <- as.Date(date.fin, format = "%Y-%m-%d")
+
+# Crear una serie temporal con los datos diarios
+datos_diarios <- ts(data_limpia[, -c(1, 2)], start = date_ini, frequency = 365)
 
 # Extraer los datos diarios, mensuales y anuales
-datos_diarios <- extract(data_limpia, from = date_ini, to = date_fin)
-datos_mensuales <- mip(datos_diarios)
-datos_anuales <- yip(datos_diarios)
+datos_diarios <- extract(datos_diarios, from = date_ini, to = date_fin)
+datos_mensuales <- daily2monthly(datos_diarios)
+datos_anuales <- daily2annual(datos_diarios)
 
 # Calcular las métricas utilizando las funciones dip, mip y yip
 metricas_diarias <- dip(datos_diarios)
