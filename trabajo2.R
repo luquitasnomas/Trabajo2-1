@@ -101,7 +101,7 @@ rango_intercuartil <- cuartiles[4] - cuartiles[2] rango_intercuartil
 
 
 #Fecha en que ocurre caudal máximo
-max.dates.index <-apply((data_na), MARGIN = 2, FUN = which.max())
+max.dates.index <-apply((data_limpia), MARGIN = 2, FUN = which.max())
 
 #Fecha caudal medio de data_elegida
 fecha_media <- mean(data_elegida, na.rm = TRUE)
