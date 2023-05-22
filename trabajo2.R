@@ -89,26 +89,46 @@ date.fin <-paste0("La fecha final de la estaciónID ingresada es: ", data_limpia
 date.ini
 date.fin
 
-
-
-# Convertir las variables date.ini y date.fin a formato de fecha
+# Definir las fechas de inicio y fin
 date_ini <- as.Date(date.ini, format = "%Y-%m-%d")
 date_fin <- as.Date(date.fin, format = "%Y-%m-%d")
 
-# Crear una serie temporal con los datos diarios
-datos_diarios <- ts(data_limpia[, -c(1, 2)], start = date_ini, frequency = 365)
+# Filtrar los datos dentro del rango de fechas
+datos_diarios <- data_limpia[date_limpia$date >= date_ini & date_limpia$date <= date_fin, ]
 
-# Extraer los datos diarios, mensuales y anuales
-datos_diarios <- extract(datos_diarios, from = date_ini, to = date_fin)
-datos_mensuales <- daily2monthly(datos_diarios)
-datos_anuales <- daily2annual(datos_diarios)
+# Calcular las métricas diarias
+dip_diarios <- dip(datos_diarios)
+mip_diarios <- mip(datos_diarios)
+yip_diarios <- yip(datos_diarios)
 
-# Calcular las métricas utilizando las funciones dip, mip y yip
-metricas_diarias <- dip(datos_diarios)
-metricas_mensuales <- mip(datos_mensuales)
-metricas_anuales <- yip(datos_anuales)
+# Convertir los datos a datos mensuales y anuales
+datos_mensuales <- aggregate(datos_diarios, by = "month")
+datos_anuales <- aggregate(datos_diarios, by = "year")
 
-# Estadísticas descriptivas de las secuencias temporales
-stats_diarias <- summary(datos_diarios)
-stats_mensuales <- summary(datos_mensuales)
-stats_anuales <- summary(datos_anuales)
+# Calcular las métricas mensuales y anuales
+dip_mensuales <- mip(datos_mensuales)
+mip_mensuales <- mip(datos_mensuales)
+yip_mensuales <- yip(datos_mensuales)
+
+dip_anuales <- mip(datos_anuales)
+mip_anuales <- mip(datos_anuales)
+yip_anuales <- yip(datos_anuales)
+
+# Realizar estadísticas descriptivas
+desc_diarios <- describe(datos_diarios)
+desc_mensuales <- describe(datos_mensuales)
+desc_anuales <- describe(datos_anuales)
+
+# Imprimir los resultados
+print(dip_diarios)
+print(mip_diarios)
+print(yip_diarios)
+print(dip_mensuales)
+print(mip_mensuales)
+print(yip_mensuales)
+print(dip_anuales)
+print(mip_anuales)
+print(yip_anuales)
+print(desc_diarios)
+print(desc_mensuales)
+print(desc_anuales)
