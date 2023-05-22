@@ -54,6 +54,55 @@ date.fin <-paste0("La fecha final de la estaciónID ingresada es: ", data_raw[12
 date.ini
 date.fin
 
+#Cuartiles
+cuartiles <- quantile(data_na, na.rm = TRUE) cuartiles
+
+#Rango intercuartil
+rango_intercuartil <- cuartiles[4] - cuartiles[2] rango_intercuartil
+
+
+#Fecha en que ocurre caudal máximo
+max.dates.index <-apply((data_na), MARGIN = 2, FUN = which.max())
+
+#Fecha caudal medio de data_elegida
+fecha_media <- mean(data_elegida, na.rm = TRUE)
+
+
+
+
+#series temporales
+#Ver si está el paquete instalado
+if (!require(hydroTSM)) {
+  install.packages("hydroTSM")
+}
+library(hydroTSM)
+#Extraer los na de data_na
+data_limpia <- na.omit(data_na)
+class(data_limpia)
+days<-dip(from=as.Date(date.ini),to=as.Date(date.fin),out.type="nmbr")
+data_diaria <- extract(data_na, FUN = max, na.rm = 0)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#################### Esto lo debo hacer con hydroTSM######################
+
 data_elegida<-data_raw[-c(1:14),]#Descarta las primeras catorce filas
 #y elige la columna de estacionNombre
 data_na<- replace(data_elegida, data_elegida == -9999, NA) #cambia los -9999 por NA
@@ -70,16 +119,3 @@ dates[na.index] #fechas de cuales son los datos faltantes
 #número de datos válidos
 datos_validos <- !is.na(es.faltante)
 sum(datos_validos)
-
-#Cuartiles
-cuartiles <- quantile(data_na, na.rm = TRUE) cuartiles
-
-#Rango intercuartil
-rango_intercuartil <- cuartiles[4] - cuartiles[2] rango_intercuartil
-
-
-#Fecha en que ocurre caudal máximo
-max.dates.index <-apply((data_na), MARGIN = 2, FUN = which.max())
-
-#Fecha caudal medio de data_elegida
-fecha_media <- mean(data_elegida, na.rm = TRUE)
