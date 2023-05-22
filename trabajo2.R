@@ -69,8 +69,8 @@ datos_validos <- !is.na(es.faltante)
 sum(datos_validos)
 #summary, sd y IQR
 summary(data_limpia)
-sd(data_limpia$estacionID)
-IQR(data_limpia$estacionID)
+sd(data_limpia$estacionID)        #Necesita correción
+IQR(data_limpia$estacionID)       #Necesita correción
 
 
 
@@ -89,45 +89,21 @@ date.fin <-paste0("La fecha final de la estaciónID ingresada es: ", data_limpia
 date.ini
 date.fin
 
-# Convierte las fechas a objetos de clase "Date"
-data_na$estacionID <- as.Date(data_na$estacionID)
+# Convertir las variables date.ini y date.fin a formato de fecha
+date_ini <- as.Date(date.ini)
+date_fin <- as.Date(date.fin)
 
-# Crea una serie temporal con los datos
-serie_temporal <- as.timeSeries(data_na[, -1], dates = data_na$estacionID)
+# Extraer los datos diarios, mensuales y anuales
+datos_diarios <- extract(data_limpia, from = date_ini, to = date_fin)
+datos_mensuales <- mip(datos_diarios)
+datos_anuales <- yip(datos_diarios)
 
+# Calcular las métricas utilizando las funciones dip, mip y yip
+metricas_diarias <- dip(datos_diarios)
+metricas_mensuales <- mip(datos_mensuales)
+metricas_anuales <- yip(datos_anuales)
 
-# Métricas diarias
-daily_stats <- data.frame(
-  "Cantidad de datos diarios" = as.vector(countObs(serie_temporal, FUN = "sum")),
-  "Cantidad de datos faltantes diarios" = as.vector(countNA(serie_temporal, FUN = "sum"))
-)
-
-# Métricas mensuales
-monthly_stats <- data.frame(
-  "Cantidad de datos mensuales" = as.vector(countObs(serie_temporal, FUN = "month", FUN2 = "sum")),
-  "Cantidad de datos faltantes mensuales" = as.vector(countNA(serie_temporal, FUN = "month", FUN2 = "sum"))
-)
-
-# Métricas estacionales
-seasonal_stats <- data.frame(
-  "Cantidad de datos estacionales" = as.vector(countObs(serie_temporal, FUN = "season", FUN2 = "sum")),
-  "Cantidad de datos faltantes estacionales" = as.vector(countNA(serie_temporal, FUN = "season", FUN2 = "sum"))
-)
-
-# Métricas anuales
-annual_stats <- data.frame(
-  "Cantidad de datos anuales" = as.vector(countObs(serie_temporal, FUN = "year", FUN2 = "sum")),
-  "Cantidad de datos faltantes anuales" = as.vector(countNA(serie_temporal, FUN = "year", FUN2 = "sum"))
-)
-
-# Estadísticas descriptivas
-descriptive_stats <- data.frame(
-  "Mínimo" = as.vector(minTS(serie_temporal)),
-  "1er Cuartil" = as.vector(quantileTS(serie_temporal, probs = 0.25)),
-  "Mediana" = as.vector(medianTS(serie_temporal)),
-  "3er Cuartil" = as.vector(quantileTS(serie_temporal, probs = 0.75)),
-  "Máximo" = as.vector(maxTS(serie_temporal)),
-  "Desviación Estándar" = as.vector(sdTS(serie_temporal)),
-  "Rango Intercuartil" = as.vector(IQRTS(serie_temporal))
-)
-
+# Estadísticas descriptivas de las secuencias temporales
+stats_diarias <- summary(datos_diarios)
+stats_mensuales <- summary(datos_mensuales)
+stats_anuales <- summary(datos_anuales)
