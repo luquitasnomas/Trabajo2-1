@@ -38,7 +38,7 @@ head(data_raw)
 # Leer el código de identificación de la estación pluviométrica
 
 estacionID<-readline(prompt = "Ingrese el código de identificación de la estación pluviométrica: ")
-estacionID
+estacionID #Notar que ya lo guarda como " " 
 
 #mostrar la informacion general de la Estación ID
 descripcionID <- data_raw[1:14, c("codigo_estacion", estacionID)]
@@ -49,14 +49,15 @@ descripcionID
 
 #ahora se selecciona las mediciones de la base de datos para hacer EDA.
 
-date.ini <-paste0("La fecha inicial de la estaciónID ingresada es: ", data_raw[12, estacionID]) #uso la variable com chr para elegir el [i] de la columna
-date.fin <-paste0("La fecha final de la estaciónID ingresada es: ", data_raw[13, estacionID])
-
+date.ini <-paste0("La fecha inicial de la estaciónID ingresada es: ", data_raw[11, estacionID]) #uso la variable com chr para elegir el [i] de la columna
+date.fin <-paste0("La fecha final de la estaciónID ingresada es: ", data_raw[12, estacionID])
+date.ini
+date.fin
 
 data_elegida<-data_raw[-c(1:14),]#Descarta las primeras catorce filas
 #y elige la columna de estacionNombre
 data_na<- replace(data_elegida, data_elegida == -9999, NA) #cambia los -9999 por NA
-
+data_na
 range(data_na, na.rm = TRUE) #Rango de valores 
 max(data_na, na.rm = TRUE)  #valor máximo
 min(data_na, na.rm=TRUE) #valor mínimo
