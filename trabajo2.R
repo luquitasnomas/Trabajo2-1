@@ -49,7 +49,7 @@ descripcionID
 
 #ahora se selecciona las mediciones de la base de datos para hacer EDA.
 
-date.ini <-paste0("La fecha inicial de la estaciónID ingresada es: ", data_raw[11, estacionID]) #uso la variable com chr para elegir el [i] de la columna
+date.ini <-paste0("La fecha inicial de la estaciónID ingresada es: ", data_raw[11, estacionID])  
 date.fin <-paste0("La fecha final de la estaciónID ingresada es: ", data_raw[12, estacionID])
 date.ini
 date.fin
